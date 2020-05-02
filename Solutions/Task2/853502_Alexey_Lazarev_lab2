@@ -1,0 +1,601 @@
+import unittest
+import class_vector
+
+
+
+class TestVectorClass(unittest.TestCase):
+
+    def test_show_info(self):
+        first_vector = (3, 5)
+        second_vector = (2, 3)
+        string = ("\nFirst vector: " + "(3, 5)" + "\t" + "Second vector: " + "(2, 3)")
+        self.assertEqual(class_vector.show_info(first_vector,second_vector), string)
+
+    def setUp(self):
+        self.first_vector = class_vector.Vector(2, [1, 1])
+        self.second_vector = class_vector.Vector(2, [2, 2])
+
+    def test_add(self):
+        self.assertEqual(self.first_vector.__add__(self.second_vector), class_vector.Vector(2, [3, 3]))
+
+    def test_mul(self):
+        self.assertEqual(self.first_vector.__mul__(self.second_vector), 4)
+
+    def test_sub(self):
+        self.assertEqual(self.second_vector.__sub__(self.first_vector), class_vector.Vector(2, [1, 1]))
+
+    def test_str(self):
+        self.assertEqual(self.first_vector.__str__(), "(1, 1)")
+
+def memoize(f):
+    cache = {}
+
+    def decorate(*args):
+        if args in cache:
+            print("[ Decorator works ]")
+            return cache[args]
+        else:
+            cache[args] = f(*args)
+            return cache[args]
+
+    return decorate
+
+
+@memoize
+def adding(first_number, second_number):
+    return int(first_number) + int(second_number)
+
+
+def main():
+    counter = 0
+    while counter < 3:
+        first_number = counter
+        second_number = counter
+        counter += 1
+        print(first_number, "+", second_number, "=", adding(first_number, second_number))
+
+    counter = 0
+
+    while counter < 5:
+        first_number = counter
+        second_number = counter
+        counter += 1
+        print(first_number, "+", second_number, "=", adding(first_number, second_number))
+
+
+if __name__ == '__main__':
+    main()
+
+import unittest
+import decorator
+
+
+class DecoratorTest(unittest.TestCase):
+
+    def test_decorator(self):
+        self.assertEqual(decorator.adding(2, 2), 4)
+
+    def test_adding(self):
+        self.assertEqual(decorator.adding(268, -68), 200)
+
+
+if __name__ == "__main__":
+    unittest.main()
+import random
+import linecache
+import time
+
+
+def merge(left, right, array):
+    i = 0
+    j = 0
+    k = 0
+
+    while i < len(left) and j < len(right):
+        if int(left[i]) < int(right[j]):
+            array[k] = left[i]
+            i = i + 1
+        else:
+            array[k] = right[j]
+            j = j + 1
+
+        k = k + 1
+
+    while i < len(left):
+        array[k] = left[i]
+        i = i + 1
+        k = k + 1
+
+    while j < len(right):
+        array[k] = right[j]
+        j = j + 1
+        k = k + 1
+
+
+def merge_sort(array):
+    n = len(array)
+    if n < 2:
+        return
+
+    mid = n // 2
+    left = []
+    right = []
+
+    for i in range(mid):
+        number = array[i]
+        left.append(number)
+
+    for k in range(mid, n):
+        number = array[k]
+        right.append(number)
+
+    merge_sort(left)
+    merge_sort(right)
+
+    merge(left, right, array)
+
+
+def sorting(first_file_line, second_file_line, output_file_path, chunk_size, first_file_line_flag,
+            second_file_line_flag, first_input, second_input, numbers_amount):
+    while first_file_line < numbers_amount // 2 and second_file_line < numbers_amount // 2:
+        f = open(output_file_path, "a")
+        first_number = linecache.getline(first_input, first_file_line)
+        second_number = linecache.getline(second_input, second_file_line)
+        while first_file_line_flag <= chunk_size and second_file_line_flag <= chunk_size:
+
+            if int(first_number) <= int(second_number):
+                f.write(str(first_number))
+                first_file_line += 1
+                first_file_line_flag += 1
+                first_number = linecache.getline(first_input, first_file_line)
+            else:
+                f.write(str(second_number))
+                second_file_line += 1
+                second_file_line_flag += 1
+                second_number = linecache.getline(second_input, second_file_line)
+
+        if first_file_line_flag > chunk_size:
+            while second_file_line_flag <= chunk_size:
+                second_number = linecache.getline(second_input, second_file_line)
+                f.write(str(second_number))
+                second_file_line += 1
+                second_file_line_flag += 1
+        else:
+            while first_file_line_flag <= chunk_size:
+                first_number = linecache.getline(first_input, first_file_line)
+                f.write(str(first_number))
+                first_file_line += 1
+                first_file_line_flag += 1
+        output_file_path = change_output(output_file_path)
+        first_file_line_flag = 1
+        second_file_line_flag = 1
+
+
+def change_output(path):
+    if path == "1_part.txt":
+        return "2_part.txt"
+    elif path == "2_part.txt":
+        return "3_part.txt"
+    elif path == "3_part.txt":
+        return "4_part.txt"
+    elif path == "4_part.txt":
+        return "1_part.txt"
+
+
+def change_input(path):
+    if path == "1_part.txt":
+        return "3_part.txt"
+    elif path == "2_part.txt":
+        return "4_part.txt"
+    elif path == "3_part.txt":
+        return "1_part.txt"
+    elif path == "4_part.txt":
+        return "2_part.txt"
+
+
+def file_fragmentation(numbers_amount, memory_limit):
+    file_number = 1
+    line = 1
+    number_array = []
+    while line < numbers_amount:
+        number_array.clear()
+        for _ in range(0, memory_limit):
+            number = linecache.getline("numbers.txt", line)
+            number_array.append(number.replace("\n", ""))
+            line += 1
+        merge_sort(number_array)
+        with open(str(file_number) + "_part.txt", "a") as file:
+            for lines in number_array:
+                file.write(str(lines) + "\n")
+        if file_number == 1:
+            file_number = 2
+        else:
+            file_number = 1
+
+
+def check_amount(numbers_amount):
+    if numbers_amount < 0:
+        return numbers_amount*(-1)
+    else:
+        return numbers_amount
+
+
+def create_file(numbers_amount, left_border, right_border):
+
+    with open('numbers.txt', 'w') as f:
+        f.writelines('{}\n'.format(random.randint(left_border, right_border)) for _ in range(numbers_amount))
+
+
+def main():
+    for i in range(1, 5):
+        with open(str(i) + "_part.txt", "w"):
+            pass
+
+    with open("output.txt", "w"):
+        pass
+
+    output_file_path = "3_part.txt"
+    numbers_amount = 50000
+    numbers_amount = check_amount(numbers_amount);
+
+    left_border = -10000
+    right_border = 10000
+    memory_limit = numbers_amount // 4
+    start_time = time.time()
+    create_file(numbers_amount, left_border, right_border)
+    file_fragmentation(numbers_amount, memory_limit)
+
+    first_file_line = 1
+    second_file_line = 1
+
+    first_input_file_path = "1_part.txt"
+    second_input_file_path = "2_part.txt"
+
+    while memory_limit <= numbers_amount:
+        if memory_limit == numbers_amount // 2:
+            sorting(1, 1, "output.txt", memory_limit, 1, 1, first_input_file_path, second_input_file_path,
+                    numbers_amount)
+            print("%s seconds" % (time.time() - start_time))
+            exit(0)
+        else:
+            sorting(first_file_line, second_file_line, output_file_path, memory_limit, 1, 1, first_input_file_path,
+                    second_input_file_path, numbers_amount)
+        first_input_file_path = change_input(first_input_file_path)
+        second_input_file_path = change_input(second_input_file_path)
+        memory_limit *= 2
+
+
+if __name__ == "__main__":
+    main()
+import unittest
+import extended_merge_sort
+
+
+class ExtendedMergeSort(unittest.TestCase):
+    def test_check_amount(self):
+        self.assertEqual(extended_merge_sort.check_amount(-3), 3, "Incorrect work")
+
+    def test_merge_sort(self):
+        arr = [2, 3, 1]
+        extended_merge_sort.merge_sort(arr)
+        self.assertEqual(arr, [1, 2, 3], "Error merge sort")
+
+
+if __name__ == "__main__":
+    unittest.main()
+import object_to_json
+from object_to_json import Person
+
+
+def from_json(json_string):
+    python_object = {}
+    index = 0
+    while index < json_string.__len__():
+        if (json_string[index] == "\"" and json_string[index - 1] == "{") or \
+                (json_string[index] == "\"" and json_string[index - 2] == ","):
+            attribute = json_string[index + 1:json_string.find("\"", index + 1)]
+            opening_commas_index = json_string.find(":", index) + 2
+            if json_string[opening_commas_index] == "{":
+                closing_commas_index = json_string.find("}", opening_commas_index) + 1
+            elif json_string[opening_commas_index] == "[":
+                closing_commas_index = json_string.find("]", opening_commas_index) + 1
+            else:
+                closing_commas_index = json_string.find(", ", index)
+            value = json_string[opening_commas_index:closing_commas_index]
+            if is_number(value):
+                value = int(value)
+            elif value == "true":
+                value = True
+            elif value == "false":
+                value = False
+            elif value == "null":
+                value = None
+            elif value.find("{") > -1:
+                value = from_json(value[value.find("{"):value.find("}") + 1])
+            elif value.find("[") > -1:
+                result = []
+                value = value[1:-1]
+                value = value.split(",")
+                for item in value:
+                    item = item.replace(" ", "")
+                    if is_number(item):
+                        result.append(int(item))
+                value = result
+            elif value.find("\"") > -1:
+                value = value.replace("\"", "")
+
+            python_object[attribute] = value
+            index = closing_commas_index
+        index += 1
+        if index == 0:
+            return python_object
+
+    return python_object
+
+
+def is_number(string):
+    for char in string:
+        if char < "0" or char > "9":
+            return False
+    return True
+
+
+def main():
+    person = Person()
+    # print("Python: ", person.__dict__)
+    print("JSON string:     ", object_to_json.to_json(person))
+    print("Python's custom: ", from_json(object_to_json.to_json(person)))
+
+
+if __name__ == "__main__":
+    main()
+
+import inspect
+import gc
+
+
+class Person(object):
+    def __init__(self):
+        self.name = "Alex"
+        self.surname = "Brown"
+        self.age = 45
+        self.numbers = [80291234567, 80449876543]
+
+
+def to_json(obj):
+    if not isinstance(obj, (set, tuple, dict, list,)):
+        attributes_dictionary = obj.__dict__
+        attributes_list = list(attributes_dictionary)
+        json_string = "{"
+        for item in attributes_dictionary:
+            if not inspect.ismethod(item):
+                json_string += "\""
+                json_string += str(item)
+                json_string += "\": "
+                attribute = getattr(obj, item)
+                if isinstance(attribute, (set, tuple, dict, list,)):
+                    json_string += "["
+                    json_string += get_values(attribute)
+                    if item != attributes_list[attributes_list.__len__() - 1]:
+                        json_string += "], "
+                    else:
+                        json_string += "]}"
+                elif isinstance(attribute, str):
+                    json_string += "\""
+                    if item != attributes_list[attributes_list.__len__() - 1]:
+                        json_string += str(attribute)
+                        json_string += "\", "
+                    else:
+                        json_string += str(attribute)
+                        json_string += "\"}"
+                else:
+                    json_string += str(attribute)
+                    if item != attributes_list[attributes_list.__len__() - 1]:
+                        json_string += ", "
+                    else:
+                        json_string += "}"
+    else:
+        json_string = "["
+        for object in obj:
+            json_string += to_json(object)
+            if object is not obj[obj.__len__() - 1]:
+                json_string += ","
+        json_string += "\n]"
+    return json_string
+
+
+def get_values(obj):
+    obj = list(obj)
+    values = ""
+    for item in obj:
+        values += str(item)
+        values += ", "
+    values = values[:values.__len__() - 2]
+    return values
+
+
+def objects_by_id(id_):
+    for obj in gc.get_objects():
+        if id(obj) == id_:
+            return obj
+
+
+def main():
+    person = Person()
+    print("JSON: ", to_json(person))
+
+
+if __name__ == "__main__":
+    main()
+
+import unittest
+import object_to_json
+
+
+class Person(object):
+    def __init__(self):
+        self.name = "Andrew"
+        self.surname = "Black"
+
+
+class TestObjectJson(unittest.TestCase):
+
+    def test_to_json(self):
+        person = Person()
+        self.assertEqual(object_to_json.to_json(person), "{\"name\": \"Andrew\", \"surname\": \"Black\"}")
+
+    def test_get_object_by_id(self):
+        obj = [1, 2, 3]
+        self.assertEqual(object_to_json.objects_by_id(id(obj)), obj)
+
+    def test_get_values(self):
+        self.assertEqual(object_to_json.get_values([1, 2]), "1, 2", "Error here")
+
+
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+from setuptools import setup, find_packages
+
+setup(
+    name="Package",
+    version="1.0",
+    author="Alexey Lazarev",
+    author_email="testmail@gmail.com",
+    description="Task python",
+    packages=find_packages(),
+    python_requires='>=3.6'
+)
+
+class Singleton(object):
+    def __new__(cls):
+        if not hasattr(cls, 'instance'):
+            cls.instance = super(Singleton, cls).__new__(cls)
+        return cls.instance
+
+
+first_singleton = Singleton()
+print("Object created", first_singleton)
+second_singleton = Singleton()
+print("Object created", second_singleton)
+
+
+class Vector(object):
+    def __init__(self, size, *user_coordinates):
+        self.size = int(size)
+        self.coordinates = []
+        for index in range(size):
+            self.coordinates.append(int(user_coordinates[0][index]))
+
+    def __add__(self, other):
+        sum_coordinates = []
+        for index in range(self.size):
+            sum_coordinates.append(self.coordinates[index] + other.coordinates[index])
+        return Vector(self.size, sum_coordinates)
+
+    def __str__(self):
+        vector_string = "("
+        for index in range(self.size):
+            vector_string += str(self.coordinates[index])
+            if index != self.coordinates.__len__() - 1:
+                vector_string += ", "
+        vector_string += ")"
+        return vector_string
+
+    def __mul__(self, other):
+        result_coordinates = []
+        result = 0
+        if isinstance(other, int):
+            for index in range(self.size):
+                result_coordinates.append(self.coordinates[index] * other)
+            return Vector(self.size, result_coordinates)
+        if isinstance(other, Vector):
+            for index in range(self.size):
+                result += self.coordinates[index] * other.coordinates[index]
+            return result
+
+    def __sub__(self, other):
+        result_coordinates = []
+        for index in range(self.size):
+            result_coordinates.append(self.coordinates[index] - other.coordinates[index])
+        return Vector(self.size, result_coordinates)
+
+    def __eq__(self, other):
+        for index in range(self.size):
+            if self.coordinates[index] != other.coordinates[index]:
+                return False
+        return True
+
+    def __len__(self):
+        return self.size
+
+    def __index__(self, other):
+        return self.coordinates[other-1]
+
+
+def input_coordinates(vector_size, vector_number):
+    coordinates = []
+    print("\nInput coordinates for " + str(vector_number) + " vector:\n")
+    for i in range(int(vector_size)):
+        coordinate = input(str(i + 1) + ": ")
+        coordinates.append(coordinate)
+    return coordinates
+
+
+def show_info(first_vector, second_vector):
+    string = ("\nFirst vector: " + str(first_vector) + "\t" + "Second vector: " + str(second_vector))
+    return string
+
+
+def main():
+    while True:
+        vector_size = int(input("Input vector's sizes: "))
+        if vector_size <= 0:
+            print("Repeat input [ size <= 0]")
+        else:
+            break
+
+    first_vector = Vector(vector_size, input_coordinates(vector_size, 1))
+    second_vector = Vector(vector_size, input_coordinates(vector_size, 2))
+    while True:
+        show_info(first_vector, second_vector)
+        operation = input("\nChoose operation:\n" +
+                          "1. Sum vectors\n" +
+                          "2. Minus vectors\n" +
+                          "3. Multiple const\n" +
+                          "4. Multiple vectors\n" +
+                          "5. Compare vectors\n" +
+                          "6. Length of vectors\n" +
+                          "7. By Index\n" +
+                          "8. Exit\n")
+        operation = int(operation)
+        if operation == 1:
+            print("\n", first_vector, " + ", second_vector, " = ", first_vector + second_vector)
+        elif operation == 2:
+            print("\n", first_vector, " - ", second_vector, " = ", first_vector - second_vector)
+        elif operation == 3:
+            constant = int(input("Input a constant: "))
+            print("\n", first_vector, " * ", constant, " = ", str(first_vector * constant), "\t",
+                  second_vector, " * ", constant, " = ", str(second_vector * constant))
+        elif operation == 4:
+            print("\n", first_vector, " * ", second_vector, " = ", first_vector * second_vector)
+        elif operation == 5:
+            if first_vector == second_vector:
+                print("\n", first_vector, " == ", second_vector)
+            else:
+                print("\n", first_vector, " != ", second_vector)
+        elif operation == 6:
+            print("\nThe length of ", first_vector, " vector = ", first_vector.__len__(), "\n")
+            print("\nThe length of ", second_vector, " vector = ", second_vector.__len__(), "\n")
+        elif operation == 7:
+            index = int(input("Input an index: "))
+            print("\nThe coordinate in first vector", first_vector.__index__(index), "\n")
+            print("\nThe coordinate in second vector", second_vector.__index__(index), "\n")
+        elif operation == 8:
+            quit()
+
+
+if __name__ == "__main__":
+    main()
