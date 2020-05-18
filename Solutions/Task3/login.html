@@ -1,0 +1,19 @@
+{% extends 'home.html' %}
+{% block content %}
+<head>
+    <title>Логин</title>
+  </head>
+  <body>
+  <div class="container">
+    <h2 class = "m-2">Авторизация:</h2>
+<div class = "col-5">
+        <form  id="login_form" method="post">
+              {% csrf_token %}
+              {{ form }}
+          </form>
+          <button form="login_form" type="submit" class="btn btn-primary mt-4">Добавить</button>
+      </div>
+      <br><br>
+      <p><a href="/">Назад к объявлениям</a></p>
+  </div></body>
+{% endblock %}

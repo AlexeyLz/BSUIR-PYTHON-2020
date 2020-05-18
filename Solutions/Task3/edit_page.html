@@ -1,0 +1,97 @@
+{% extends 'home.html' %}
+{% block content %}
+<head>
+    <title>Подробно об автомобиле</title>
+  </head>
+  <body>
+  <div class="container">
+    <h2 class = "m-2">Редактирование</h2>
+  <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary m-2" data-toggle="modal" data-target="#exampleModal">
+  Добавить автомобиль
+</button>
+{% if success %}
+    <p style="color: forestgreen">Запись добавлена успешно</p>
+  {% endif %}
+  {% if messages %}
+  <div class="alert alert-success">
+  {% for m in messages %}
+      {{ m }}
+  {% endfor %}
+
+  </div>
+  {% endif %}
+
+  {% if update  %}
+      <p class="m-2">Страница редактирования</p>
+       <form  id="update_data" method="post">
+              {% csrf_token %}
+              {{ form }}
+          </form>
+      <button form="update_data" type="submit" class="btn btn-primary m-2">Сохранить</button>
+  {% else %}
+
+      <table class="table table-bordered m-2">
+  <thead>
+    <tr>
+      <th scope="col">id</th>
+      <th scope="col">Название</th>
+      <th scope="col">Дата создания</th>
+      <th scope="col">Редактировать</th>
+      <th scope="col">Удалить</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in car_list %}
+    <tr>
+      <th>{{ i.id }}</th>
+      <td>{{ i.title }}</td>
+      <td>{{ i.created_at | date:'d.m.Y'}} <br>  Создано: {{i.author}}</td>
+      <td><a href="{% url 'update_page' i.id %}">Редактировать</a></td>
+      <td>
+          <form id="delete_form" action="{% url 'delete_page' i.id %}" method="post">{% csrf_token %}</form>
+           <script>
+              function delete_question() {
+                  if (confirm("Удалить?")){
+                      document.getElementById('delete_form').submit()
+                  }
+
+              }
+          </script>
+          <a href="javascript:void(0)" onClick="delete_question()">Удалить</a>
+
+
+      </td>
+
+    </tr>
+  {% endfor %}
+
+  </tbody>
+</table>
+{% endif %}
+  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+          <form  id="add_form" method="post">
+              {% csrf_token %}
+              {{ form }}
+          </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+        <button form="add_form" type="submit" class="btn btn-primary">Добавить</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </div></body>
+{% endblock %}
